@@ -5,10 +5,12 @@ import estructura.ArbolBinarioBusqueda;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 
 
 public class UsoArbol {
-    
 
     public static void main(String[] args) {
 		ArbolBinarioBusqueda<String, diccionario> arbol;
@@ -43,14 +45,14 @@ public class UsoArbol {
                     )
                 );
 
-                arbol1.Insert(values[0], new diccionario(
+                arbol1.Insert(values[1], new diccionario(
                         values[0]
                         , values[1]
                         ,(values[2])
                     )
                 );
 
-                arbol2.Insert(values[0], new diccionario(
+                arbol2.Insert(values[2], new diccionario(
                         values[0]
                         , values[1]
                         ,(values[2])
@@ -62,18 +64,80 @@ public class UsoArbol {
             e.printStackTrace();
         }
 
-        System.out.println(" \n*** LISTADO DE AUTOS EN CONSOLA EN INGLES*** ");
+        System.out.println(" \n*** LISTADO DE AUTOS EN CONSOLA EN INGLES *** ");
 		arbol.InOrder(new ListarDiccionarioI(), arbol._raiz);
 
-        System.out.println(" \n*** LISTADO DE AUTOS EN CONSOLA EN ESPAÑOL*** ");
+        System.out.println(" \n*** LISTADO DE AUTOS EN CONSOLA EN ESPAÑOL *** ");
 		arbol.InOrder(new ListarDiccionarioE(), arbol1._raiz);
 
 
-        System.out.println(" \n*** LISTADO DE AUTOS EN CONSOLA EN FRANCES*** ");
+        System.out.println(" \n*** LISTADO DE AUTOS EN CONSOLA EN FRANCES *** ");
 		arbol.InOrder(new ListarDiccionarioF(), arbol2._raiz);
 
-        System.out.println(" \n*** TRADUCCION DE TEXTO EN traducido.txt*** ");
+        System.out.println(" \n*** TRADUCCION DE TEXTO EN traducido.txt *** ");
+        
 
+
+        /******************************************* */
+
+        ArrayList<String> datos = new ArrayList<String>();
+
+        File file = new File("texto.txt");
+        try {
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+
+                Scanner lineScanner = new Scanner(line);
+                lineScanner.useDelimiter(" ");
+                while (lineScanner.hasNext()) {
+                    String part = lineScanner.next();
+                    datos.add(part);
+                }                
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //verifica la traduccion linea por linea y guardarla en String
+
+        String listadoElementos = "";
+
+        
+        for(int i= 0; i < datos.size(); i++){
+
+            String pal = datos.get(i);
+            //busca la palabra en el arbol
+            diccionario diccio = arbol.InOrderT(new ListarDiccionario<>(), arbol._raiz, pal);
+
+            String tra= "";
+
+            if(diccio == null){
+                tra= "*" + pal + "*";
+            }else{
+                tra=diccio.espanol;
+            }
+
+
+            listadoElementos = listadoElementos+ tra + " ";
+
+        }
+            
+        System.out.println(listadoElementos);
+
+        //Envia el String a traducido.txt
+
+        File archivo;
+		archivo = new File("traducido.txt");
+		
+		 
+		try {
+			FileWriter fw = new FileWriter(archivo, false);
+			fw.write(listadoElementos);
+			fw.close();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
 
     }
 		

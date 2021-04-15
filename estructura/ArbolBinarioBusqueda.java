@@ -45,7 +45,7 @@ public class ArbolBinarioBusqueda<K, T> implements IArbolBinario<K, T> {
 				if (_actual.hijoIzquierdo == null) { //Puedo insertar en hijo izquierdo
 					_actual.hijoIzquierdo = _new;
 					_count++;
-				} else { //Entra cuando no puedo insertar en el hijo izquierdo de actual ya que está ocupado
+				} else { //Entra cuando no puedo insertar en el hijo izquierdo de actual ya que estï¿½ ocupado
 					InsertAux(_actual.hijoIzquierdo, _new);
 				}
 			} else if (_keyComparator.Compare(_actual._key, _new._key) < 0) { //Entra cuando actual < nuevo Inserta en hijo derecho
@@ -53,7 +53,7 @@ public class ArbolBinarioBusqueda<K, T> implements IArbolBinario<K, T> {
 				if (_actual.hijoDerecho == null) { //Puedo insertar en hijo derecho
 					_actual.hijoDerecho = _new;
 					_count++;
-				} else { //Entra cuando no puedo insertar en el hijo derecho de actual ya que está ocupado
+				} else { //Entra cuando no puedo insertar en el hijo derecho de actual ya que estï¿½ ocupado
 					InsertAux(_actual.hijoDerecho, _new);
 				}
 			} else {
@@ -71,8 +71,33 @@ public class ArbolBinarioBusqueda<K, T> implements IArbolBinario<K, T> {
 
 	@Override
 	public T Find(K key) {
-		// TODO Auto-generated method stub
+		T respuesta = null;
 		return null;
+	}
+
+	public T FindN(K key, NodoArbol<K, T> actual) {
+		T respuesta = null;
+
+		if(actual != null){
+
+			if(((String)actual._key).equals((String)key)){
+				respuesta = actual._value;
+
+			}
+
+			if(respuesta == null){
+				respuesta = FindN(key, actual.hijoIzquierdo);
+
+			}
+
+			if(respuesta == null){
+				respuesta = FindN(key,actual.hijoDerecho);
+			}
+
+		}
+
+
+		return respuesta;
 	}
 
 	@Override
@@ -96,6 +121,23 @@ public class ArbolBinarioBusqueda<K, T> implements IArbolBinario<K, T> {
 		}
 		
 	}
+
+
+	public T InOrderT(IVisitar<K, T> visitNode, NodoArbol<K, T> actual, K key) {
+		T res = null;
+
+		if (actual != null) {
+			InOrderT(visitNode, actual.hijoIzquierdo, key);
+			visitNode.VisitarNodo(actual);
+
+			res = FindN(key, actual);
+			
+			InOrderT(visitNode,actual.hijoDerecho,key);
+		}
+		return res;
+		
+	}
+
 
 	@Override
 	public void PreOrder(IVisitar<K, T> visitNode, NodoArbol<K, T> actual) {
